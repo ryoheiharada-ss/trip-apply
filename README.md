@@ -1,36 +1,107 @@
-This is a [Next.js](https://nextjs.org) project bootstrapped with [`create-next-app`](https://nextjs.org/docs/app/api-reference/cli/create-next-app).
+# 出張申請システム
 
-## Getting Started
+## 概要
+企業の国内出張申請をオンラインで完結できるシステムです。複数人での出張申請や、同一行程・個別行程の選択に対応しています。
 
-First, run the development server:
+## 使用技術スタック
+### フレームワーク・ライブラリ
+- Next.js (App Router)
+- React Hook Form
+- Zod
+- ShadcnUI
+- TailwindCSS
+- Zustand
 
-```bash
-npm run dev
-# or
-yarn dev
-# or
-pnpm dev
-# or
-bun dev
+### 主要機能
+1. 基本情報入力 (Step1)
+   - 申請者情報の登録
+   - 複数出張者の登録
+   - 同一/個別行程の選択
+   - 出張分類と目的の設定
+
+2. 宿泊・移動情報入力 (Step2)
+   - 出張期間の設定
+   - 宿泊地域の選択
+   - 宿泊費の自動計算
+   - 基準額超過時の理由入力
+   
+3. その他の機能
+   - 複数人での個別行程管理
+   - 宿泊費の地域別基準額チェック
+   - フォーム間の状態管理
+   - 日本語検索対応
+   - プログレスバーによる進捗表示
+
+## データフロー想定
+```
+flowchart LR
+    subgraph Client
+      A[User Browser - Form Input, Review, Confirm, Submit]
+    end
+
+    subgraph NextJS
+      B[Next.js Frontend & Server]
+    end
+
+    subgraph ExternalAPIs
+      C[Dify API - AI Review]
+      D[Google Maps API - Geocode]
+      E[NAVITIME Route API - Route]
+    end
+
+    subgraph OrgDB
+      F[Organization DB: PostgreSQL or Supabase...]
+    end
+
+    subgraph TicketFunction
+      G[Ticket function]
+    end
+
+    subgraph TicketDB
+      H[Slack]
+      I[ServiceNow]
+      J[Ticket DB: PostgreSQL]
+    end
+
+    A -->|Send Form| B
+    B -->|Organization Data Lookup| F
+    B -->|AI Review| C
+    B -->|Get Location| D
+    B -->|Get Route| E
+    C -->|Review Result| B
+    D -->|Location Data| B
+    E -->|Route Data| B
+    B -->|POST Input Data| G
+    G -->|Store Data| H
+    G -->|Store Data| I
+    G -->|Store Data| J
+    G -->|Confirmation| B
+    B -->|Return Result| A
+
 ```
 
-Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
 
-You can start editing the page by modifying `app/page.tsx`. The page auto-updates as you edit the file.
+## フォームバリデーション
+- Zodによる型安全な入力値検証
+- 必須項目のチェック
+- 日付範囲の整合性確認
+- 宿泊費基準額超過のチェック
 
-This project uses [`next/font`](https://nextjs.org/docs/app/building-your-application/optimizing/fonts) to automatically optimize and load [Geist](https://vercel.com/font), a new font family for Vercel.
+## UI/UX
+- レスポンシブデザイン
+- ダークモード対応
+- 直感的な操作フロー
+- 入力補助機能
+  - 日本語検索
+  - カレンダー選択
+  - プルダウン選択
 
-## Learn More
+## セキュリティ
+- 入力値のサニタイズ
+- フォームデータの検証
 
-To learn more about Next.js, take a look at the following resources:
-
-- [Next.js Documentation](https://nextjs.org/docs) - learn about Next.js features and API.
-- [Learn Next.js](https://nextjs.org/learn) - an interactive Next.js tutorial.
-
-You can check out [the Next.js GitHub repository](https://github.com/vercel/next.js) - your feedback and contributions are welcome!
-
-## Deploy on Vercel
-
-The easiest way to deploy your Next.js app is to use the [Vercel Platform](https://vercel.com/new?utm_medium=default-template&filter=next.js&utm_source=create-next-app&utm_campaign=create-next-app-readme) from the creators of Next.js.
-
-Check out our [Next.js deployment documentation](https://nextjs.org/docs/app/building-your-application/deploying) for more details.
+## 今後の展開
+- [ ] ステップ3以降の実装
+- [ ] データの永続化
+- [ ] 承認フロー
+- [ ] PDF出力
