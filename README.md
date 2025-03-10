@@ -33,7 +33,8 @@
    - プログレスバーによる進捗表示
 
 ## データフロー想定
-```
+
+```mermaid
 flowchart LR
     subgraph Client
       A[User Browser - Form Input, Review, Confirm, Submit]
@@ -100,8 +101,3 @@ flowchart LR
 - 入力値のサニタイズ
 - フォームデータの検証
 
-## 今後の展開
-- [ ] ステップ3以降の実装
-- [ ] データの永続化
-- [ ] 承認フロー
-- [ ] PDF出力
